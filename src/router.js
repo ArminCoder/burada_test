@@ -4,6 +4,7 @@ import rules from "./rules";
 // Views
 const Login = () => import("./views/Login");
 const Dashboard = () => import("./views/Dashboard");
+const Post = () => import("./views/Post");
 
 export default {
   getRoutes() {
@@ -14,6 +15,12 @@ export default {
           path: "/dashboard",
           name: "dashboard",
           component: Dashboard,
+          beforeEnter: rules.isLoggedIn 
+        },
+        {
+          path: "/post/:id?",
+          name: "post",
+          component: Post,
           beforeEnter: rules.isLoggedIn
         },
         {

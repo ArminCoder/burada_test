@@ -21,7 +21,9 @@
               <div class="d-flex flex-column">{{item.Name}}</div>
               <div v-if="selectedTemplate.Id == item.Id" class="bg-light rounded">
                 <div v-if="templatePosts.length">
-                  <div class="d-flex justify-content-between align-items-center border p-2 bg-secondary text-white">
+                  <div
+                    class="d-flex justify-content-between align-items-center border p-2 bg-secondary text-white"
+                  >
                     <span class="w-25">Text</span>
                     <span>Image</span>
                     <span>Day</span>
@@ -33,7 +35,7 @@
                     :key="post.Id"
                     class="post d-flex justify-content-between align-items-center border p-2"
                   >
-                    <span class="w-25">{{post.Text}}</span>
+                    <span @click="toPostScreen(post)" class="w-25 text-primary cursor-pointer text-underline">{{post.Text}}</span>
                     <img class="postImg" v-if="post.Image" :src="post.Image" alt />
                     <img
                       class="postImg"
@@ -44,40 +46,45 @@
                     <span>{{ post.Day }}</span>
                     <span>{{ post.Time }}</span>
                     <div class="d-flex">
-                        <span class="cursor-pointer mx-2 text-primary" @click="editPost(post.Id)">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-pen"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"
-                            />
-                          </svg>
-                        </span>
-                        <span class="cursor-pointer mx-2 text-danger" @click="deletePost(post.Id)">
-                          <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="currentColor"
-                            class="bi bi-pen"
-                            viewBox="0 0 16 16"
-                          >
-                            <path
-                              d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"
-                            />
-                          </svg>
-                        </span>
+                      <span class="cursor-pointer mx-2 text-primary" @click="editPost(post)">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-pen"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="m13.498.795.149-.149a1.207 1.207 0 1 1 1.707 1.708l-.149.148a1.5 1.5 0 0 1-.059 2.059L4.854 14.854a.5.5 0 0 1-.233.131l-4 1a.5.5 0 0 1-.606-.606l1-4a.5.5 0 0 1 .131-.232l9.642-9.642a.5.5 0 0 0-.642.056L6.854 4.854a.5.5 0 1 1-.708-.708L9.44.854A1.5 1.5 0 0 1 11.5.796a1.5 1.5 0 0 1 1.998-.001zm-.644.766a.5.5 0 0 0-.707 0L1.95 11.756l-.764 3.057 3.057-.764L14.44 3.854a.5.5 0 0 0 0-.708l-1.585-1.585z"
+                          />
+                        </svg>
+                      </span>
+                      <span class="cursor-pointer mx-2 text-danger" @click="deletePost(post)">
+                        <svg
+                          xmlns="http://www.w3.org/2000/svg"
+                          width="16"
+                          height="16"
+                          fill="currentColor"
+                          class="bi bi-trash"
+                          viewBox="0 0 16 16"
+                        >
+                          <path
+                            d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"
+                          />
+                          <path
+                            fill-rule="evenodd"
+                            d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"
+                          />
+                        </svg>
+                      </span>
                     </div>
                   </div>
                 </div>
                 <div v-else>
                   <div class="text-left">This template contains no posts...</div>
                 </div>
+                <button @click="toPostScreen" class="btn btn-primary mt-4">+ Create Post</button>
               </div>
             </td>
             <td>{{item.Posts}}</td>
@@ -134,6 +141,9 @@
         :mode="mode"
       />
     </modal>
+    <modal v-if="showEditPostsModal" @close="close">
+      <SinglePost @update="updatePost" :post="selectedPost" />
+    </modal>
   </div>
 </template>
 
@@ -141,6 +151,7 @@
 import Navigation from "../components/Nav";
 import Modal from "../components/Misc/Modal";
 import SingleTemplate from "../components/Template";
+import SinglePost from "../components/SinglePost";
 import { bus } from "../main";
 import axios from "axios";
 
@@ -151,6 +162,7 @@ export default {
     Navigation,
     Modal,
     SingleTemplate,
+    SinglePost,
   },
 
   mounted() {
@@ -159,16 +171,28 @@ export default {
 
   data() {
     return {
-      smg: "test",
-      templatesData: [],
-      selectedTemplate: {},
-      mode: "create",
       showModal: false,
+      showEditPostsModal: false,
+      mode: "create",
+      templatesData: [],
       templatePosts: [],
+      selectedTemplate: {},
+      selectedPost: {},
     };
   },
 
   methods: {
+    toPostScreen(post = {}) {
+      console.log(post);
+
+      localStorage.setItem('template_id', this.selectedTemplate.Id);
+
+      if(post.Id) {
+        return this.$router.push("/post/" + post.Id)
+      }
+      this.$router.push("/post")
+    },
+
     viewPosts(item) {
       this.selectedTemplate = item;
 
@@ -210,6 +234,12 @@ export default {
           bus.$emit("alert", "<span class='text-success'>Success!</span>");
           this.getTemplates();
           this.showModal = false;
+        })
+        .catch((err) => {
+          bus.$emit(
+            "alert",
+            `<span class='text-danger'>${err.response.data.error_description}`
+          );
         });
     },
 
@@ -226,8 +256,14 @@ export default {
         .post(`https://app.postmypartytest.com/api/Templates`, data, config)
         .then(() => {
           bus.$emit("alert", "<span class='text-success'>Success!</span>");
-          this.getTemplates();
           this.showModal = false;
+          this.getTemplates();
+        })
+        .catch((err) => {
+          bus.$emit(
+            "alert",
+            `<span class='text-danger'>${err.response.data.error_description}`
+          );
         });
     },
 
@@ -278,14 +314,69 @@ export default {
       this.showModal = false;
     },
 
-    editPost(id) {
-      console.log('edit', id);
+    editPost(post) {
+      this.showEditPostsModal = true;
+      this.selectedPost = post;
     },
 
-    deletePost(id) {
-      console.log('delete', id);
+    updatePost(data) {
+      const token = localStorage.getItem("token");
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      axios
+        .put(
+          `https://app.postmypartytest.com/api/TemplatePosts/${data.Id}`,
+          data,
+          config
+        )
+        .then(() => {
+          bus.$emit(
+            "alert",
+            "<span class='text-success'>Success! Post Updated!</span>"
+          );
+          this.viewPosts(this.selectedTemplate);
+          this.showEditPostsModal = false;
+        })
+        .catch((err) => {
+          bus.$emit(
+            "alert",
+            `<span class='text-danger'>${err.response.data.error_description}`
+          );
+        });
     },
 
+    deletePost(post) {
+      const token = localStorage.getItem("token");
+
+      const config = {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      };
+
+      axios
+        .delete(
+          `https://app.postmypartytest.com/api/TemplatePosts/${post.Id}`,
+          config
+        )
+        .then((res) => {
+          console.log(res);
+          this.viewPosts(this.selectedTemplate);
+          this.selectedTemplate.Posts -= 1;
+          bus.$emit("alert", "<span class='text-success'>Post Deleted!</span>");
+        })
+        .catch((err) => {
+          bus.$emit(
+            "alert",
+            `<span class='text-danger'>${err.response.data.error_description}`
+          );
+        });
+    },
   },
 };
 </script>
@@ -297,10 +388,6 @@ label {
 
 .cursor-pointer {
   cursor: pointer;
-}
-
-form {
-  text-align: left;
 }
 
 .post {
