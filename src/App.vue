@@ -1,5 +1,5 @@
 <template>
-  <div id="app" class="container">
+  <div id="app" class="container position-relative">
     <notifications />
     <router-view></router-view>
   </div>

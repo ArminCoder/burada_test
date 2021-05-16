@@ -30,9 +30,11 @@ export default {
 
 <style scoped>
 .notification {
-    position: fixed;
+    position: absolute;
     top: 20px;
-    right: 50px;
+    left: 50%;
+    transform: translateX(-50%);
+    box-shadow: 1px 1px 10px #ccc;
     border: 1px solid inherit;
     z-index: 10;
 }

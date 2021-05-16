@@ -1,6 +1,5 @@
 <template>
   <div
-    v-if="showModal"
     class="modal-wrapper"
   >
     <transition
@@ -30,7 +29,7 @@
       leave-to-class="opacity-0 scale-70"
       appear
     >
-      <div v-if="showContent" class="relative">
+      <div class="relative">
         <slot></slot>
       </div>
     </transition>
@@ -39,61 +38,14 @@
 
 <script>
 export default {
-  props: ["open"],
   data() {
     return {
-      showModal: false,
-      showBackdrop: false,
-      showContent: false,
-      backdropLeaving: false,
-      cardLeaving: false,
     };
   },
-  created() {
-    const onEscape = (e) => {
-      if (this.open && e.keyCode === 27) {
-        this.close();
-      }
-    };
-
-    document.addEventListener("keydown", onEscape);
-
-    this.$once("hook:destroyed", () => {
-      document.removeEventListener("keydown", onEscape);
-    });
-  },
-  watch: {
-    open: {
-      handler: function (newValue) {
-        if (newValue) {
-          this.show();
-        } else {
-          this.close();
-        }
-      },
-      immediate: true,
-    },
-    leaving(newValue) {
-      if (newValue === false) {
-        this.showModal = false;
-        this.$emit("close");
-      }
-    },
-  },
-  computed: {
-    leaving() {
-      return this.backdropLeaving || this.cardLeaving;
-    },
-  },
+ 
   methods: {
-    show() {
-      this.showModal = true;
-      this.showBackdrop = true;
-      this.showContent = true;
-    },
     close() {
-      this.showBackdrop = false;
-      this.showContent = false;
+      this.$emit('close');
     },
   },
 };
