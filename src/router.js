@@ -27,7 +27,7 @@ export default {
           path: "/login",
           name: "login",
           component: Login,
-          // beforeEnter: rules.isGuest
+          beforeEnter: rules.isGuest
         },
         {
           path: "*",

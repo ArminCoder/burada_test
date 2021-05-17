@@ -15,12 +15,12 @@
           </tr>
         </thead>
         <tbody v-if="templatesData && templatesData.length">
-          <tr v-for="item in templatesData" :key="item.id">
-            <th scope="row">{{item.Id}}</th>
+          <tr v-for="template in templatesData" :key="template.id">
+            <th scope="row">{{template.Id}}</th>
             <td>
-              <div class="d-flex flex-column">{{item.Name}}</div>
-              <div v-if="selectedTemplate.Id == item.Id" class="bg-light rounded">
-                <div v-if="templatePosts.length">
+              <div class="d-flex flex-column">{{template.Name}}</div>
+              <div v-if="selectedTemplate.Id == template.Id" class="bg-light rounded">
+                <div v-if="templatePosts.length" class="mt-2">
                   <div
                     class="d-flex justify-content-between align-items-center border p-2 bg-secondary text-white"
                   >
@@ -81,20 +81,20 @@
                     </div>
                   </div>
                 </div>
-                <div v-else>
+                <div v-else class="mt-2">
                   <div class="text-left">This template contains no posts...</div>
                 </div>
                 <button @click="toPostScreen" class="btn btn-primary mt-4">+ Create Post</button>
               </div>
             </td>
-            <td>{{item.Posts}}</td>
-            <td>{{ new Date(item.DateCreated).toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}}</td>
+            <td>{{template.Posts}}</td>
+            <td>{{ new Date(template.DateCreated).toLocaleDateString("en-US", { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}}</td>
             <td>
               <div class="d-flex align-items-center justify-content-center">
                 <span
                   class="cursor-pointer mx-2"
-                  :class="{'text-success' : item.Posts , 'text-secondary' : !item.Posts }"
-                  @click="viewPosts(item)"
+                  :class="{'text-primary' : template.Posts , 'text-secondary' : !template.Posts }"
+                  @click="loadPosts(template)"
                 >
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
@@ -112,7 +112,7 @@
                     />
                   </svg>
                 </span>
-                <span class="cursor-pointer mx-2 text-primary" @click="editTemplate(item)">
+                <span class="cursor-pointer mx-2 text-primary" @click="editTemplate(template)">
                   <svg
                     xmlns="http://www.w3.org/2000/svg"
                     width="16"
@@ -167,6 +167,9 @@ export default {
 
   mounted() {
     this.getTemplates();
+    if(localStorage.getItem('template_id')) {
+      localStorage.removeItem('template_id');
+    }
   },
 
   data() {
@@ -183,8 +186,6 @@ export default {
 
   methods: {
     toPostScreen(post = {}) {
-      console.log(post);
-
       localStorage.setItem('template_id', this.selectedTemplate.Id);
 
       if(post.Id) {
@@ -193,13 +194,14 @@ export default {
       this.$router.push("/post")
     },
 
-    viewPosts(item) {
-      this.selectedTemplate = item;
+    loadPosts(template) {
+      this.templatePosts = [];
+      this.selectedTemplate = template;
 
       let token = localStorage.getItem("token");
 
       axios
-        .get(`https://app.postmypartytest.com/api/Templates/${item.Id}/Posts`, {
+        .get(`https://app.postmypartytest.com/api/Templates/${template.Id}/Posts`, {
           headers: {
             Authorization: "Bearer " + token,
           },
@@ -339,7 +341,7 @@ export default {
             "alert",
             "<span class='text-success'>Success! Post Updated!</span>"
           );
-          this.viewPosts(this.selectedTemplate);
+          this.loadPosts(this.selectedTemplate);
           this.showEditPostsModal = false;
         })
         .catch((err) => {
@@ -364,9 +366,8 @@ export default {
           `https://app.postmypartytest.com/api/TemplatePosts/${post.Id}`,
           config
         )
-        .then((res) => {
-          console.log(res);
-          this.viewPosts(this.selectedTemplate);
+        .then(() => {
+          this.loadPosts(this.selectedTemplate);
           this.selectedTemplate.Posts -= 1;
           bus.$emit("alert", "<span class='text-success'>Post Deleted!</span>");
         })

@@ -53,8 +53,6 @@ export default {
       params.append('username', this.email)
       params.append('password', this.password)
 
-      console.log(params);
-
       const config = {
         headers: {
           'Content-Type': 'application/x-www-form-urlencoded'

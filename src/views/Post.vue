@@ -11,13 +11,19 @@
           required
           max="500"
         />
-        <img class="postImg" v-if="post.Image" :src="post.Image" alt />
-        <img
-          class="postImg"
-          v-else
-          src="https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg"
-          alt
-        />
+        <small
+          v-if="maxLengthError"
+          class="text-danger"
+        >Post text cannot be longer than 500 characters.</small>
+        <div>
+          <img class="postImg" v-if="post.Image" :src="post.Image" alt />
+          <img
+            class="postImg"
+            v-else
+            src="https://thumbs.dreamstime.com/b/no-image-available-icon-flat-vector-no-image-available-icon-flat-vector-illustration-132482953.jpg"
+            alt
+          />
+        </div>
         <input
           type="number"
           class="form-control mt-4"
@@ -27,30 +33,32 @@
           max="31"
           required
         />
+        <small
+          v-if="invalidIntegerError"
+          class="text-danger"
+        >Number cannot be smaller than 1 or larger then 31.</small>
         <input type="time" class="form-control mt-4" placeholder="Day" v-model="post.Time" required />
         <button
           v-if="post.Id"
           @click="updatePost"
           class="btn mt-4 btn-primary btn-block"
           type="submit"
+          :disabled="disabled"
         >Update</button>
         <button
           v-else
           @click="createPost"
           class="btn mt-4 btn-primary btn-block"
           type="submit"
+          :disabled="disabled"
         >Create</button>
       </div>
     </div>
-    <modal v-if="showCreateEditPost">
-      <div>smh</div>
-    </modal>
   </div>
 </template>
 
 <script>
 import Navigation from "../components/Nav";
-import Modal from "../components/Misc/Modal";
 import { bus } from "../main";
 import axios from "axios";
 
@@ -59,13 +67,26 @@ export default {
 
   components: {
     Navigation,
-    Modal,
+  },
+
+  computed: {
+    disabled() {
+      return !this.post.Text || !this.post.Day || !this.post.Time || this.maxLengthError || this.invalidIntegerError;
+    },
+
+    maxLengthError() {
+      return this.post.Text.length > 500;
+    },
+
+    invalidIntegerError() {
+      return (this.post.Day < 1 || this.post.Day > 31) && this.post.Day != null;
+    },
   },
 
   created() {
-    if(!localStorage.getItem('template_id')) {
-        return this.$router.back();
-    }  
+    if (!localStorage.getItem("template_id")) {
+      return this.$router.back();
+    }
 
     this.validRoute = true;
 
@@ -77,14 +98,24 @@ export default {
   data() {
     return {
       showCreateEditPost: false,
-      post: {},
-      validRoute: false
+      post: {
+        Text: "",
+        Day: null,
+        Time: null,
+      },
+      validRoute: false,
     };
   },
 
   methods: {
     createPost() {
-      this.post.templateId = localStorage.getItem('template_id');
+      if (this.disabled)
+        return bus.$emit(
+          "alert",
+          "<span class='text-danger'>Please fill in all required fields."
+        );
+
+      this.post.templateId = localStorage.getItem("template_id");
 
       const token = localStorage.getItem("token");
 
@@ -100,13 +131,17 @@ export default {
           this.post,
           config
         )
-        .then((res) => {
-          console.log("res", res);
+        .then(() => {
           bus.$emit(
             "alert",
             "<span class='text-success'>Success! New Post Created!</span>"
           );
-          this.post = {};
+
+          this.post = {
+            Text: "",
+            Day: null,
+            Time: null,
+          };
         })
         .catch((err) => {
           bus.$emit(
@@ -117,6 +152,12 @@ export default {
     },
 
     updatePost() {
+      if (this.disabled)
+        return bus.$emit(
+          "alert",
+          "<span class='text-danger'>Please fill in all required fields."
+        );
+
       const token = localStorage.getItem("token");
 
       const config = {
@@ -173,7 +214,6 @@ export default {
     },
   },
 };
-Modal;
 </script>
 
 <style scoped>
